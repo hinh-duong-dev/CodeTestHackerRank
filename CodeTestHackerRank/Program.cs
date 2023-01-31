@@ -13,47 +13,20 @@ namespace CodeTestHackerRank
             //string[] picture = { "aabba", "aabba", "aaacb" };
             //string[] picture = { "aaaba", "ababa", "aaaca" };
 
-            string[] picture = { "bbba", "abba", "acaa", "aaac" };
+            //string[] picture = { "bbba", "abba", "acaa", "aaac" };
 
 
-            int numberOfFills = StrokesRequired(picture);
-            Console.WriteLine(numberOfFills);
+            //int numberOfFills = StrokesRequired(picture);
+            //Console.WriteLine(numberOfFills);
 
             //----------------------------------------
 
             //Quiz 2
-            //var kthFactor = KthFactor(12, 3);
-            //var kthFactor = KthFactor(7, 2);
+            //var kthFactor = KthFactor1(12, 3);
+            var kthFactor = KthFactor2(10, 5);
             //var kthFactor = KthFactor(4, 4);
-            // Console.WriteLine(kthFactor);
+            Console.WriteLine(kthFactor);
 
-
-            //var h = 4;
-            var pictures = new[] { "bbba", "abba", "acaa", "aaac" };
-
-            var pictureArrs = pictures.Select(x => x.ToList()).ToList();
-
-            var strokeList = new List<List<(int, int)>>();
-
-            // find list of items with their nearby items has same value 
-            for (var row = 0; row < pictureArrs.Count; row++)
-            {
-                for (var col = 0; col < pictureArrs[row].Count; col++)
-                {
-                    // if item is not in any nearby item list
-                    if (strokeList.FirstOrDefault(x => x.Any(p =>
-                            p == (row, col) && pictureArrs[p.Item1][p.Item2] == pictureArrs[row][col])) is null)
-                    {
-                        var nearbyItems = new List<(int, int)>();
-
-                        FindNearBy(pictureArrs, nearbyItems, (row, col));
-
-                        strokeList.Add(nearbyItems);
-                    }
-                }
-            }
-
-            Console.WriteLine(strokeList.Count);
 
             Console.ReadKey();
         }
@@ -120,48 +93,26 @@ namespace CodeTestHackerRank
 
         static long KthFactor(long n, long k)
         {
-            long count = 1;
-            for (long i = 1; i <= n; i++)
+            for (long i = 1; i * i < n; i++)
             {
-                if (i != 0 && n % i == 0)
+                if (n % i == 0)
                 {
-                    if (count == k)
-                    {
-                        return i;
-                    }
-                    else
-                    {
-                        count++;
-                    }
+                    k--;
+                    if (k == 0) return i;
                 }
             }
 
-            return -1;
+            for (long i = (long)Math.Sqrt(n); i >= 1; i--)
+            {
+                if (n % i == 0)
+                {
+                    k--;
+                    if (k == 0) return n / i;             
+                }
+            }
 
-            //var listFactor = new List<long>();
-
-            //int factor;
-
-            //for (factor = 1; factor <= n / 2; factor++)
-            //{
-            //    if (factor != 0 && n % factor == 0)
-            //    {
-            //        listFactor.Add(factor);
-            //    }
-            //}
-
-            //listFactor.Add(n);
-
-            //listFactor.Sort();
-
-            //if (k - 1 >= listFactor.Count)
-            //{
-            //    return -1;
-            //}
-
-            //return listFactor.ToArray()[k - 1];
+            return -0;
         }
-
 
         private static void FindNearBy(List<List<char>> pictureArrs, List<(int, int)> nearByItems, (int, int) currentPoint)
         {
@@ -195,6 +146,81 @@ namespace CodeTestHackerRank
             {
                 FindNearBy(pictureArrs, nearByItems, (currentPoint.Item1, currentPoint.Item2 + 1));
             }
+        }
+
+        static long KthFactor1(long n, long p)
+        {
+            var lst1 = new List<long>();
+            var lst2 = new List<long>();
+
+            var count = 0;
+            long result = 0;
+
+            for (long i = 1; i * i < n; i++)
+            {
+                if (n % i == 0)
+                {
+                    lst1.Add(i);
+                    count++;
+                    if (count == p)
+                    {
+                        result = i;
+                        break;
+                    }
+
+                    var j = n / i;
+
+                    if (j != i)
+                    {
+                        lst2.Insert(0, j);
+                    }
+                }
+            }
+
+            if (result > 0)
+            {
+                return result;
+            }
+            else
+            { 
+                lst2.AddRange(lst1);
+                var countList = lst1.Count();
+
+                if (countList > 0 && p <= countList)
+                {
+                    result = lst1.ToArray()[p - 1];
+                }
+                else
+                { 
+                    result= 0;
+                }
+            }
+
+            return result;
+        }
+
+        static long KthFactor2(long n, long p)
+        {
+            var factors = new List<long>();
+
+            for (long factor = 1; factor <= (long)Math.Sqrt(n); factor++) 
+            {
+                if (n % factor == 0)
+                {
+                    factors.Add(factor);
+                    if (factor != n / factor) 
+                        factors.Add(n / factor);
+                }
+            }
+
+            factors.Sort();
+
+            if (p-1 < factors.Count)
+            {
+                return factors.ToArray()[p - 1];
+            }
+
+            return 0;
         }
     }
 }
