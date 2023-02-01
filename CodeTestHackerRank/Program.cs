@@ -164,7 +164,7 @@ namespace CodeTestHackerRank
         static long PthFactor(long n, long p)
             {
                 long count = 0;
-                long max = (int)Math.Sqrt(n);
+                long max = (long)Math.Sqrt(n);
                 for (long i = 1; i <= max; i++)
                 {
                     if (n % i == 0)
